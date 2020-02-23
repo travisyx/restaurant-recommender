@@ -1,0 +1,24 @@
+{
+  "name": "restaurant-recommender",
+  "version": "1.0.0",
+  "description": "This recommends a restaurant to the user based on their interests and their location.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "dev": "nodemon index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/travisyx/restaurant-recommender.git"
+  },
+  "author": "Travis Xiang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/travisyx/restaurant-recommender/issues"
+  },
+  "homepage": "https://github.com/travisyx/restaurant-recommender#readme",
+  "dependencies": {
+    "nodemon": "^2.0.2",
+    "yelp-fusion": "^3.0.0"
+  }
+}
