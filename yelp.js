@@ -1,31 +1,15 @@
-'use strict';
+const head = require("Headers ");
 
-const yelp = require('yelp-fusion');
-const client = yelp.client('p5bQJH1HPyIfJCSGlFS22FkYCWiRiDR1rQEDEfr8_MZUlzrOo4i3CEc8qVDdTdXbk1DmHJdnfuErzo4vuoS1_4tGvZB-augVp9Lg6jGaa9uV-BlBkNzho4QQP7ZRXnYx');
+var myHeaders = new Headers();
+myHeaders.append("Authorization", "Bearer p5bQJH1HPyIfJCSGlFS22FkYCWiRiDR1rQEDEfr8_MZUlzrOo4i3CEc8qVDdTdXbk1DmHJdnfuErzo4vuoS1_4tGvZB-augVp9Lg6jGaa9uV-BlBkNzho4QQP7ZRXnYx");
 
-// client.transactionSearch('delivery', {
-//     location: 'san diego'
-//   }).then(response => {
-//       response.jsonBody.businesses.forEach(printName);
-//   }).catch(e => {
-//     console.log(e);
-//   });
+var requestOptions = {
+  method: 'GET',
+  headers: myHeaders,
+  redirect: 'follow'
+};
 
-client.autocomplete({
-    text: 'pizza'
-  }).then(response => {
-      response.jsonBody.terms.forEach(printText);
-    // console.log(response.jsonBody.terms[0].text);
-  }).catch(e => {
-    console.log(e);
-  });
-  
-
-  
-  function printName(item){
-      console.log(item.name);
-  }
-
-  function printText(item){
-      console.log(item.text);
-  }
+fetch("https://api.yelp.com/v3/businesses/search?latitude=28.6778&longitude=-81.3278&term=restaurant&radius=8000", requestOptions)
+  .then(response => response.text())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
