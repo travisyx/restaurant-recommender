@@ -3,7 +3,7 @@
 <head>
   <title>Home</title>
   <link rel="stylesheet" type="text/css" href="style.css">
-  <!-- <script>
+  <script>
     var lat = 0;
     var long = 0;
     if("geolocation" in navigator){
@@ -12,12 +12,13 @@
         long =  position.coords.longitude;
         document.getElementById("lat").innerHTML = lat;
         document.getElementById("long").innerHTML = long;
-
+        localStorage.setItem("latitude", lat);
+        localStorage.setItem("longitude", long);
       });
     } else {
       console.log("not available");
     }
-  </script> -->
+  </script>
 </head>
 <body>
   <header id="title">
@@ -29,8 +30,9 @@
   <nav id="navbar">
     <div class="everything">
       <ul>
-        <li><a href="about.html">About</a></li>
-        <li><a href="map.html">Recommendation Map</a></li>
+        <li><a href="./html/about.html">About</a></li>
+        <li><a href="./html/map.html">Recommendation Map</a></li>
+        <li><a href="./html/yelp.html">Yelp Display</a></li>
       </ul>
     </div>
   </nav>
@@ -41,7 +43,13 @@
     </p>
     <p>
       Welcome! To access the about page, click the "About" button above. To access the recommender, hit the "Map" button above.
+
+      You are currently at <span id="lat">_____________</span>, <span id="long">_____________</span>.
     </p>
+    <ul>
+      <li><a href="./html/map.html">Access Recommendations Using Your Coordinates</a></li>
+      <li><a href="./html/map.html">Access Recommendations Using Custom Coordinates</a></li>
+    </ul>
   </div>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBq3tGjb7VKuNtNdiP6b4z_w9l60mkx6uI&callback=initMap"
   async defer></script>

@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/travisyx/restaurant-recommender#readme",
   "dependencies": {
+    "node-fetch": "^2.6.0",
     "nodemon": "^2.0.2",
     "yelp-fusion": "^3.0.0"
   }
