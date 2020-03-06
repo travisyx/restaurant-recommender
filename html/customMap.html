@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Map</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+
+    <!-- MOVE TO STYLE.CSS FILE -->
+    <!-- MOVE TO STYLE.CSS FILE -->
+    <!-- MOVE TO STYLE.CSS FILE -->
+    <style>
+      #map {
+        height: 400px;
+        width: 80%;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <!-- MOVE TO STYLE.CSS FILE -->
+    <!-- MOVE TO STYLE.CSS FILE -->
+    <!-- MOVE TO STYLE.CSS FILE -->
+
+    <script src="ejs.js"></script>
+    <!-- Loads the map from the map.js file -->
+    <script>
+      // Pasadena : lat: 34.1478, lng: -118.1445
+      var latitude = parseFloat(localStorage.getItem("latitude"));
+      var longitude = parseFloat(localStorage.getItem("longitude"));
+
+      var map;
+      var restMarker = new Array();
+      var counter = 0;
+      // Initializes the map
+      function initMap() {
+        var latLng = { lat: latitude, lng: longitude };
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: latitude, lng: longitude },
+          zoom: 15
+        });
+
+        // Adds a marker for the user's location
+        var userFlag = new google.maps.Marker({
+          position: latLng,
+          map: map,
+          title: "You are here.",
+          icon: { url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png" }
+        });
+
+        for (var i = 0; i < arrMarker.length; i++) {
+          var userLoc = new google.maps.Marker({
+            position: { lat: arrMarker[i].lat, lng: arrMarker[i].lng },
+            map: null,
+            title: `Restaurant at (${arrMarker[i].lat}, ${arrMarker[i].lng})`
+          });
+        }
+        update();
+        // restMarker[counter].setMap(map);
+      }
+
+      function update() {
+        if (!(arrMarker[counter].name === null))
+          document.getElementById("name").innerHTML = arrMarker[counter].name;
+        if (!(arrMarker[counter].rating === null))
+          document.getElementById("rating").innerHTML =
+            arrMarker[counter].rating;
+        if (!(arrMarker[counter].revCt === null))
+          document.getElementById("revCt").innerHTML = arrMarker[counter].revCt;
+        if (!(arrMarker[counter].phone === null))
+          document.getElementById("phone").innerHTML = arrMarker[counter].phone;
+        if (!(arrMarker[counter].dist === null))
+          document.getElementById("dist").innerHTML = arrMarker[counter].dist;
+      }
+
+      // Updates the counter and gets the next request
+      function nextRequest() {
+        counter++;
+        update();
+      }
+    </script>
+  </head>
+  <body>
+    <header id="title">
+      <div class="everything">
+        <h1>Restaurant Recommender</h1>
+      </div>
+    </header>
+
+    <nav id="navbar">
+      <div class="everything">
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="customMap.html">Recommendation Map</a></li>
+          <li><a href="yelp.html">Yelp Display</a></li>
+          <li><a href="index.html">Home</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div>
+      <p>
+        You have selected to use custom coordinates. Your flag is in blue. The
+        restaurant flags we recommend are in red.
+      </p>
+    </div>
+    <!-- Displays the map -->
+    <div id="map"></div>
+    <div>
+      <p>
+        Using an equation that balances rating and the number of review, we
+        recommend <% latitude %>, which has a rating of
+        <span id="review">_____</span> stars based on
+        <span id="revCt">_____</span> reviews. This restaurant is
+        <span id="dist">_____</span> meters from you. If you would like to
+        contact them, you can at <span id="phone">_____</span>.
+      </p>
+    </div>
+    <div>
+      <button onclick="update()">
+        Not Satisfied? Click to Get Another Recommendation
+      </button>
+    </div>
+  </body>
+  <!-- The source for the google maps API with the key -->
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBq3tGjb7VKuNtNdiP6b4z_w9l60mkx6uI&callback=initMap"
+    async
+    defer
+  ></script>
+</html>

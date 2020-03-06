@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script>
+      var lat = 0;
+      var long = 0;
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          lat = position.coords.latitude;
+          long = position.coords.longitude;
+          document.getElementById("lat").innerHTML = lat;
+          document.getElementById("long").innerHTML = long;
+          localStorage.setItem("latitude", lat);
+          localStorage.setItem("longitude", long);
+        });
+      } else {
+        console.log("not available");
+      }
+    </script>
+  </head>
+  <body>
+    <header id="title">
+      <div class="everything">
+        <h1>Restaurant Recommender</h1>
+      </div>
+    </header>
+
+    <nav id="navbar">
+      <div class="everything">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="map.html">Recommendation Map</a></li>
+          <li><a href="yelp.html">Yelp Display</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="everything">
+      <p id="backgroundtext">
+        We use the geolocation of your web browser to find good restaurants
+        nearby.
+      </p>
+      <p>
+        Welcome! To access the about page, click the "About" button above. To
+        access the recommender, hit the "Map" button above. You are currently at
+        <span id="lat">_____________</span>,
+        <span id="long">_____________</span>.
+      </p>
+      <ul>
+        <li>
+          <a href="map.html">Access Recommendations Using Your Coordinates</a>
+        </li>
+        <li>
+          <form>
+            <label for="fname">Search Query</label><br />
+            <input type="text" id="squery" name="squery" />
+            <button type="submit" href="customMap.html">Enter</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>
