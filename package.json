@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "This recommends a restaurant to the user based on their interests and their location.",
   "main": "index.js",
+  "engines": {
+    "node": "12.16.1"
+  },
   "scripts": {
     "start": "node index",
     "dev": "nodemon index"
@@ -18,7 +21,12 @@
   },
   "homepage": "https://github.com/travisyx/restaurant-recommender#readme",
   "dependencies": {
+    "ejs": "^3.0.1",
     "express": "^4.17.1",
+    "external-ip": "^2.1.1",
+    "follow-redirects": "^1.10.0",
+    "jquery": "^3.4.1",
+    "jsdom": "^16.2.0",
     "node-fetch": "^2.6.0",
     "nodemon": "^2.0.2",
     "yelp-fusion": "^3.0.0"
