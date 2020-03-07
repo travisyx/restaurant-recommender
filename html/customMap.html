@@ -28,6 +28,9 @@
     <script src="ejs.js"></script>
     <!-- Loads the map from the map.js file -->
     <script>
+      var zcode = localStorage.getItem("zcode");
+      document.getElementById("hmm").innerHTML = zcode;
+
       // Pasadena : lat: 34.1478, lng: -118.1445
       var latitude = parseFloat(localStorage.getItem("latitude"));
       var longitude = parseFloat(localStorage.getItem("longitude"));
@@ -110,14 +113,7 @@
     <!-- Displays the map -->
     <div id="map"></div>
     <div>
-      <p>
-        Using an equation that balances rating and the number of review, we
-        recommend <% latitude %>, which has a rating of
-        <span id="review">_____</span> stars based on
-        <span id="revCt">_____</span> reviews. This restaurant is
-        <span id="dist">_____</span> meters from you. If you would like to
-        contact them, you can at <span id="phone">_____</span>.
-      </p>
+      <p>uhh <span id="hmm">placeholder</span></p>
     </div>
     <div>
       <button onclick="update()">

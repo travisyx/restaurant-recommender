@@ -6,17 +6,51 @@
     <script>
       var lat = 0;
       var long = 0;
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-          lat = position.coords.latitude;
-          long = position.coords.longitude;
-          document.getElementById("lat").innerHTML = lat;
-          document.getElementById("long").innerHTML = long;
-          localStorage.setItem("latitude", lat);
-          localStorage.setItem("longitude", long);
-        });
-      } else {
-        console.log("not available");
+      function enableLocation() {
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(async function(position) {
+            lat = position.coords.latitude;
+            long = position.coords.longitude;
+            localStorage.setItem("latitude", lat);
+            localStorage.setItem("longitude", long);
+
+            // const data = { lat, long };
+            // const options = {
+            //   method: "POST",
+            //   headers: {
+            //     "Content-Type": "application/json"
+            //   },
+            //   body: JSON.stringify(data)
+            // };
+            // const response = await fetch("/api", options);
+            // const json = await response.json();
+            // console.log(json);
+          });
+        } else {
+          console.log("not available");
+        }
+      }
+
+      function redirect() {
+        if (
+          localStorage.getItem("latitude") === null ||
+          localStorage.getItem("longitude") === null
+        ) {
+          alert(
+            "You have not enabled the location to be set. Please allow for the location to be set."
+          );
+        } else {
+          window.location.href = "map.html";
+        }
+      }
+
+      function submitForm() {
+        if (localStorage.getItem("zcode").equals("")) {
+          alert("Please enter a zip code into the search box.");
+        } else {
+          localStorage.setItem("zcode", document.getElementById("zcode"));
+          window.location.href = "customMap.html";
+        }
       }
     </script>
   </head>
@@ -39,26 +73,48 @@
     </nav>
 
     <div class="everything">
-      <p id="backgroundtext">
-        We use the geolocation of your web browser to find good restaurants
-        nearby.
-      </p>
       <p>
-        Welcome! To access the about page, click the "About" button above. To
-        access the recommender, hit the "Map" button above. You are currently at
-        <span id="lat">_____________</span>,
-        <span id="long">_____________</span>.
+        Welcome to the restaurant recommender! To view recommendations, you can
+        either use custom search queries (such as a zip code or custom
+        coordinates) or your own location. If you choose to use your own
+        location, please first click the "Enable Location" button and click
+        accept to allow us to use HTML Geolocation to find where to recommend
+        restaurants near you. Then click the "Access Recommendations Using Your
+        Coordinates" button to view what we recommend. To access the about page,
+        click the "About" button above.
       </p>
       <ul>
         <li>
-          <a href="map.html">Access Recommendations Using Your Coordinates</a>
+          <button onclick="enableLocation()">Enable Location</button>
+          <button onclick="redirect()">
+            Access Recommendations Using Your Coordinates
+          </button>
         </li>
         <li>
           <form>
-            <label for="fname">Search Query</label><br />
-            <input type="text" id="squery" name="squery" />
-            <button type="submit" href="customMap.html">Enter</button>
+            <label for="customLatitude">Latitude</label><br />
+            <input type="number" id="customLatitude" placeholder="Latitude" />
+            <label for="customLongitude">Longitude</label><br />
+            <input type="number" id="customLongitude" placeholder="Longitude" />
+            <button id="submitCustom">Enter</button>
           </form>
+          <script>
+            addEventListener(
+              "click",
+              document.getElementById("submitCustom"),
+              function() {
+                localStorage.setItem(
+                  "customLatitude",
+                  JSON.stringify(document.getElementById("customLatitude"))
+                );
+                localStorage.setItem(
+                  "customLongitude",
+                  JSON.stringify(document.getElementById("customLongitude"))
+                );
+                window.location.href = "customMap.html";
+              }
+            );
+          </script>
         </li>
       </ul>
     </div>

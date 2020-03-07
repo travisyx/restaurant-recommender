@@ -25,513 +25,132 @@
     <!-- MOVE TO STYLE.CSS FILE -->
     <!-- MOVE TO STYLE.CSS FILE -->
 
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.js"
+      integrity="sha384-mlceH9HlqLp7GMKHrj5Ara1+LvdTZVMx4S1U43/NxCvAkzIo8WJ0FE7duLel3wVo"
+      crossorigin="anonymous"
+    ></script>
+
     <!-- Loads the map from the map.js file -->
     <script>
-      // Pasadena : lat: 34.1478, lng: -118.1445
-      var latitude = parseFloat(localStorage.getItem("latitude"));
-      var longitude = parseFloat(localStorage.getItem("longitude"));
+      var storedLat = parseFloat(localStorage.getItem("latitude"));
+      var storedLong = parseFloat(localStorage.getItem("longitude"));
+      var businesses = [];
+
+      var token =
+        "Bearer p5bQJH1HPyIfJCSGlFS22FkYCWiRiDR1rQEDEfr8_MZUlzrOo4i3CEc8qVDdTdXbk1DmHJdnfuErzo4vuoS1_4tGvZB-augVp9Lg6jGaa9uV-BlBkNzho4QQP7ZRXnYx";
+      var cors_anywhere = "https://cors-anywhere.herokuapp.com";
+      var yelp_search = "https://api.yelp.com/v3/businesses/search";
+      function clientCallback() {
+        console.log("Made it to the client callback.");
+      }
+      var requestObj = {
+        async: false,
+        url: cors_anywhere + "/" + yelp_search,
+        data: {
+          term: "restaurants",
+          latitude: localStorage.getItem("latitude"),
+          longitude: localStorage.getItem("longitude"),
+          radius: 8000,
+          limit: 50
+        },
+        headers: {
+          Authorization: token
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.log(
+            "AJAX error, jqXHR = ",
+            jqXHR,
+            ", textStatus = ",
+            textStatus,
+            ", errorThrown = ",
+            errorThrown
+          );
+        }
+      };
+      $.ajax(requestObj).done(function(response) {
+        for (var i = 0; i < response.businesses.length; ++i) {
+          businesses.push({
+            name: response.businesses[i].name,
+            lat: response.businesses[i].coordinates.latitude,
+            long: response.businesses[i].coordinates.longitude,
+            rating: response.businesses[i].rating,
+            phone: response.businesses[i].phone,
+            dist: response.businesses[i].distance,
+            revCt: response.businesses[i].review_count,
+            price: response.businesses[i].price
+          });
+        }
+        // Sorts the input array first by rating then by distance
+        businesses.sort((obj1, obj2) =>
+          obj1.rating > obj2.rating
+            ? 1
+            : obj1.rating === obj2.rating
+            ? obj1.dist < obj2.dist
+              ? 1
+              : -1
+            : -1
+        );
+        businesses.reverse();
+        console.log(businesses);
+      });
+      console.log(businesses.length);
 
       var map;
-      var arrMarker = [
-        {
-          name: "Prime Rib By The Pool",
-          lat: 34.145523,
-          lng: -118.131046,
-          rating: 5,
-          phone: +16264862951,
-          dist: 1262.4359104574903,
-          revCt: 5
-        },
-        {
-          name: "La Camarona",
-          lat: 34.127982,
-          lng: -118.146401,
-          rating: 5,
-          phone: +16267442777,
-          dist: 2212.008735179165,
-          revCt: 11
-        },
-        {
-          name: "Osawa Shabu Shabu & Sushi",
-          lat: 34.1471685557797,
-          lng: -118.149086762449,
-          rating: 4.5,
-          phone: +16266831150,
-          dist: 427.89362824987074,
-          revCt: 1164
-        },
-        {
-          name: "Fishwives",
-          lat: 34.1473284832148,
-          lng: -118.150331312987,
-          rating: 4.5,
-          phone: +16262196199,
-          dist: 539.1772855921232,
-          revCt: 645
-        },
-        {
-          name: "Tibet Nepal House",
-          lat: 34.1475051,
-          lng: -118.1496825,
-          rating: 4.5,
-          phone: +16265850955,
-          dist: 479.29365944019764,
-          revCt: 1289
-        },
-        {
-          name: "White Horse Lounge",
-          lat: 34.1451785,
-          lng: -118.1523978,
-          rating: 4.5,
-          phone: +16265839013,
-          dist: 819.3567375490022,
-          revCt: 1404
-        },
-        {
-          name: "Bistro 45",
-          lat: 34.14502,
-          lng: -118.13124,
-          rating: 4.5,
-          phone: +16267952478,
-          dist: 1273.394168398915,
-          revCt: 749
-        },
-        {
-          name: "Soh Grill House",
-          lat: 34.1463701,
-          lng: -118.1490249,
-          rating: 4.5,
-          phone: +16267147760,
-          dist: 449.1228306925005,
-          revCt: 346
-        },
-        {
-          name: "Nick's Pasadena",
-          lat: 34.140076,
-          lng: -118.131831,
-          rating: 4.5,
-          phone: +16267871444,
-          dist: 1448.0986328540737,
-          revCt: 773
-        },
-        {
-          name: "Cafe Beaujolais",
-          lat: 34.13921,
-          lng: -118.20414,
-          rating: 4.5,
-          phone: +13232555111,
-          dist: 5574.313984433371,
-          revCt: 1416
-        },
-        {
-          name: "Dirt Dog - Pasadena",
-          lat: 34.146418,
-          lng: -118.1499002,
-          rating: 4.5,
-          phone: +16263455306,
-          dist: 520.1692211294364,
-          revCt: 146
-        },
-        {
-          name: "The Stand",
-          lat: 34.144909522902,
-          lng: -118.136810671388,
-          rating: 4.5,
-          phone: +16267147117,
-          dist: 768.9172349770593,
-          revCt: 653
-        },
-        {
-          name: "Porkys Pit Stop",
-          lat: 34.16919617,
-          lng: -118.11895183,
-          rating: 4.5,
-          phone: +16267106089,
-          dist: 3344.469468259319,
-          revCt: 13
-        },
-        {
-          name: "Funnel Birds",
-          lat: 34.184284,
-          lng: -118.131185,
-          rating: 4.5,
-          phone: +16267168015,
-          dist: 1707.8498786383745,
-          revCt: 74
-        },
-        {
-          name: "Main Chick Hot Chicken",
-          lat: 34.146614,
-          lng: -118.149718,
-          rating: 4.5,
-          phone: null,
-          dist: 497.96449014473114,
-          revCt: 13
-        },
-        {
-          name: "Café Santorini",
-          lat: 34.1466051,
-          lng: -118.1518944,
-          rating: 4,
-          phone: +16265644200,
-          dist: 691.5922015627526,
-          revCt: 2616
-        },
-        {
-          name: "Anayas",
-          lat: 34.14576,
-          lng: -118.137388,
-          rating: 4,
-          phone: +16264608893,
-          dist: 692.6776644407803,
-          revCt: 138
-        },
-        {
-          name: "Eden Garden Bar & Grill",
-          lat: 34.1477649,
-          lng: -118.1469868,
-          rating: 4,
-          phone: +16264401422,
-          dist: 179.01888937293532,
-          revCt: 521
-        },
-        {
-          name: "GRANVILLE",
-          lat: 34.14113,
-          lng: -118.13203,
-          rating: 4,
-          phone: +16263607633,
-          dist: 1363.1330040409446,
-          revCt: 992
-        },
-        {
-          name: "Edwin Mills by Equator",
-          lat: 34.145337,
-          lng: -118.151118,
-          rating: 4,
-          phone: +16265648656,
-          dist: 667.7693566087561,
-          revCt: 901
-        },
-        {
-          name: "Brick & Flour",
-          lat: 34.1478112,
-          lng: -118.1216402,
-          rating: 4,
-          phone: +16267370449,
-          dist: 2103.6496749738117,
-          revCt: 270
-        },
-        {
-          name: "The Crack Shack - Pasadena",
-          lat: 34.14423,
-          lng: -118.15115,
-          rating: 4,
-          phone: +14249010077,
-          dist: 730.6957770846838,
-          revCt: 630
-        },
-        {
-          name: "Bone Kettle",
-          lat: 34.1470861160768,
-          lng: -118.14909864217,
-          rating: 4,
-          phone: +16267955702,
-          dist: 430.56766682062664,
-          revCt: 929
-        },
-        {
-          name: "Green Street Tavern",
-          lat: 34.1445118481825,
-          lng: -118.152018123986,
-          rating: 4,
-          phone: +16262299961,
-          dist: 782.5302798815236,
-          revCt: 1295
-        },
-        {
-          name: "True Food Kitchen",
-          lat: 34.14558,
-          lng: -118.153988,
-          rating: 4,
-          phone: +16266396818,
-          dist: 907.3591460642759,
-          revCt: 1342
-        },
-        {
-          name: "Alexander's Steakhouse - Pasadena",
-          lat: 34.147449,
-          lng: -118.142256,
-          rating: 4,
-          phone: +16264861111,
-          dist: 214.69760404567413,
-          revCt: 1009
-        },
-        {
-          name: "Arroyo Chop House",
-          lat: 34.136691,
-          lng: -118.147255,
-          rating: 4,
-          phone: +16265777463,
-          dist: 1261.0149680987652,
-          revCt: 1336
-        },
-        {
-          name: "Great Maple - Pasadena",
-          lat: 34.145685,
-          lng: -118.144542,
-          rating: 4,
-          phone: +16267147625,
-          dist: 235.2087673116526,
-          revCt: 1888
-        },
-        {
-          name: "Fleming's Prime Steakhouse & Wine Bar- Pasadena",
-          lat: 34.1459349,
-          lng: -118.146575,
-          rating: 4,
-          phone: +16266390490,
-          dist: 266.90977890108314,
-          revCt: 739
-        },
-        {
-          name: "Lunasia Dim Sum House",
-          lat: 34.1459549,
-          lng: -118.14567,
-          rating: 4,
-          phone: +16267938822,
-          dist: 215.5167035117965,
-          revCt: 1532
-        },
-        {
-          name: "Parkway Grill",
-          lat: 34.13696,
-          lng: -118.1469,
-          rating: 4,
-          phone: +16267951001,
-          dist: 1214.284448293646,
-          revCt: 856
-        },
-        {
-          name: "Maestro Restaurant",
-          lat: 34.1467311089622,
-          lng: -118.148001090669,
-          rating: 4,
-          phone: +16267871512,
-          dist: 354.82123705527016,
-          revCt: 407
-        },
-        {
-          name: "Sage Plant Based Bistro Old Town Pasadena",
-          lat: 34.1463349,
-          lng: -118.1512962,
-          rating: 4,
-          phone: +16265648111,
-          dist: 678.5698931205947,
-          revCt: 676
-        },
-        {
-          name: "La Grande Orange Café",
-          lat: 34.1408998776825,
-          lng: -118.148517608643,
-          rating: 4,
-          phone: +16263564444,
-          dist: 851.6958012738551,
-          revCt: 3058
-        },
-        {
-          name: "Gale's",
-          lat: 34.1379606,
-          lng: -118.1502651,
-          rating: 4,
-          phone: +16264326705,
-          dist: 1224.8140403061464,
-          revCt: 1091
-        },
-        {
-          name: "Union",
-          lat: 34.146963,
-          lng: -118.1496096,
-          rating: 4,
-          phone: +16267955841,
-          dist: 479.3303483346313,
-          revCt: 1158
-        },
-        {
-          name: "Gus's Barbecue",
-          lat: 34.1163948,
-          lng: -118.1500394,
-          rating: 4,
-          phone: +16267993251,
-          dist: 3529.1184585694004,
-          revCt: 2187
-        },
-        {
-          name: "Malbec Argentinean Cuisine",
-          lat: 34.1447118081496,
-          lng: -118.129667945289,
-          rating: 4,
-          phone: +16266830550,
-          dist: 1407.4621407100576,
-          revCt: 1715
-        },
-        {
-          name: "Ruth's Chris Steak House",
-          lat: 34.1460256026692,
-          lng: -118.1425956,
-          rating: 4,
-          phone: +16265838122,
-          dist: 263.8979660626409,
-          revCt: 1849
-        },
-        {
-          name: "Equelecuá Cuban Vegan Café",
-          lat: 34.144817,
-          lng: -118.138496,
-          rating: 4,
-          phone: +13237412822,
-          dist: 641.0400990051359,
-          revCt: 830
-        },
-        {
-          name: "Ramen Tatsunoya",
-          lat: 34.1460254755853,
-          lng: -118.150425667589,
-          rating: 4,
-          phone: +16264321768,
-          dist: 565.3499090759958,
-          revCt: 1247
-        },
-        {
-          name: "Pinocchio's Pizza",
-          lat: 34.170873,
-          lng: -118.132329,
-          rating: 4,
-          phone: +16267917591,
-          dist: 2799.3574068371577,
-          revCt: 863
-        },
-        {
-          name: "The Raymond 1886",
-          lat: 34.124537,
-          lng: -118.150019,
-          rating: 4,
-          phone: +16264413136,
-          dist: 2636.1255865792255,
-          revCt: 1247
-        },
-        {
-          name: "Magnolia House",
-          lat: 34.1373794,
-          lng: -118.1319765,
-          rating: 4,
-          phone: +16265841126,
-          dist: 1634.3062379602718,
-          revCt: 946
-        },
-        {
-          name: "Smitty's Grill",
-          lat: 34.14388,
-          lng: -118.13185,
-          rating: 4,
-          phone: +16267929999,
-          dist: 1217.0731524277066,
-          revCt: 710
-        },
-        {
-          name: "Chef Tony Dim Sum",
-          lat: 34.1455,
-          lng: -118.15025,
-          rating: 3.5,
-          phone: +16268030028,
-          dist: 584.1156869690029,
-          revCt: 41
-        },
-        {
-          name: "Roy's Restaurant",
-          lat: 34.14597011,
-          lng: -118.1371343,
-          rating: 3.5,
-          phone: +16263564066,
-          dist: 707.7096374462623,
-          revCt: 1548
-        },
-        {
-          name: "Yard House",
-          lat: 34.1455501520682,
-          lng: -118.143610276614,
-          rating: 3.5,
-          phone: +16265779273,
-          dist: 263.2291128443258,
-          revCt: 1982
-        },
-        {
-          name: "The Cheesecake Factory",
-          lat: 34.145544,
-          lng: -118.150681,
-          rating: 3,
-          phone: +16265846000,
-          dist: 621.667676542801,
-          revCt: 1056
-        },
-        {
-          name: "BJ's Restaurant & Brewhouse",
-          lat: 34.145628,
-          lng: -118.1456357,
-          rating: 3,
-          phone: +16262040845,
-          dist: 263.15871410587806,
-          revCt: 725
-        }
-      ];
-
       var restMarker = new Array();
       var counter = 0;
-      // Initializes the map
       function initMap() {
-        var latLng = { lat: latitude, lng: longitude };
         map = new google.maps.Map(document.getElementById("map"), {
-          center: { lat: latitude, lng: longitude },
+          center: { lat: storedLat, lng: storedLong },
           zoom: 13
         });
 
         // Adds a marker for the user's location
         var userFlag = new google.maps.Marker({
-          position: latLng,
+          position: { lat: storedLat, lng: storedLong },
           map: map,
           title: "You are here.",
-          icon: { url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png" }
+          icon: {
+            url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+          }
         });
 
-        for (var i = 0; i < arrMarker.length; i++) {
+        for (var i = 0; i < businesses.length; i++) {
           var userLoc = new google.maps.Marker({
-            position: { lat: arrMarker[i].lat, lng: arrMarker[i].lng },
+            position: {
+              lat: businesses[i].lat,
+              lng: businesses[i].long
+            },
             map: null,
-            title: `Restaurant at (${arrMarker[i].lat}, ${arrMarker[i].lng})`
+            title: `${businesses[i].name}`
           });
           restMarker.push(userLoc);
         }
         update();
-        restMarker[counter].setMap(map);
       }
 
       function update() {
-        if (!(arrMarker[counter].name === null)) {
-          document.getElementById("name").innerHTML = arrMarker[counter].name;
+        if (!(businesses[counter].name === null)) {
+          document.getElementById("name").innerHTML = businesses[counter].name;
         }
-        if (!(arrMarker[counter].rating === null)) {
+        if (!(businesses[counter].rating === null)) {
           document.getElementById("review").innerHTML =
-            arrMarker[counter].rating;
+            businesses[counter].rating;
         }
-        if (!(arrMarker[counter].revCt === null)) {
-          document.getElementById("revCt").innerHTML = arrMarker[counter].revCt;
+        if (!(businesses[counter].revCt === null)) {
+          document.getElementById("revCt").innerHTML =
+            businesses[counter].revCt;
         }
-        if (!(arrMarker[counter].phone === null)) {
+        if (!(businesses[counter].phone === null)) {
           document.getElementById("phone").innerHTML =
-            "+" + arrMarker[counter].phone;
+            businesses[counter].phone;
         }
-        if (!(arrMarker[counter].dist === null)) {
-          document.getElementById("dist").innerHTML = arrMarker[counter].dist;
+        if (!(businesses[counter].dist === null)) {
+          document.getElementById("dist").innerHTML = businesses[counter].dist;
+        }
+        if (!(businesses[counter].price == null)) {
+          document.getElementById("price").innerHTML =
+            "The price is " + businesses[counter].price + " out of $$$$.";
         }
       }
 
@@ -583,8 +202,9 @@
         recommend <span id="name">_____</span>, which has a rating of
         <span id="review">_____</span> stars based on
         <span id="revCt">_____</span> reviews. This restaurant is
-        <span id="dist">_____</span> meters from you. If you would like to
-        contact them, you can at <span id="phone">_____</span>.
+        <span id="dist">_____</span> meters from you.
+        <span id="price"></span> If you would like to contact them, you can at
+        <span id="phone">_____</span>.
       </p>
 
       <p>

@@ -3,108 +3,181 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <title>Yelp</title>
+    <style>
+      #map {
+        height: 400px;
+        width: 80%;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.js"
+      integrity="sha384-mlceH9HlqLp7GMKHrj5Ara1+LvdTZVMx4S1U43/NxCvAkzIo8WJ0FE7duLel3wVo"
+      crossorigin="anonymous"
+    ></script>
+    <div id="map">
+      <script>
+        var storedLat = parseFloat(localStorage.getItem("latitude"));
+        var storedLong = parseFloat(localStorage.getItem("longitude"));
+        var businesses = [];
+
+        var token =
+          "Bearer p5bQJH1HPyIfJCSGlFS22FkYCWiRiDR1rQEDEfr8_MZUlzrOo4i3CEc8qVDdTdXbk1DmHJdnfuErzo4vuoS1_4tGvZB-augVp9Lg6jGaa9uV-BlBkNzho4QQP7ZRXnYx";
+        var cors_anywhere = "https://cors-anywhere.herokuapp.com";
+        var yelp_search = "https://api.yelp.com/v3/businesses/search";
+        function clientCallback() {
+          console.log("Made it to the client callback.");
+        }
+        var requestObj = {
+          async: false,
+          url: cors_anywhere + "/" + yelp_search,
+          data: {
+            term: "restaurants",
+            latitude: localStorage.getItem("latitude"),
+            longitude: localStorage.getItem("longitude"),
+            radius: 8000,
+            limit: 50
+          },
+          headers: {
+            Authorization: token
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            console.log(
+              "AJAX error, jqXHR = ",
+              jqXHR,
+              ", textStatus = ",
+              textStatus,
+              ", errorThrown = ",
+              errorThrown
+            );
+          }
+        };
+        $.ajax(requestObj).done(function(response) {
+          for (var i = 0; i < response.businesses.length; ++i) {
+            businesses.push({
+              name: response.businesses[i].name,
+              lat: response.businesses[i].coordinates.latitude,
+              long: response.businesses[i].coordinates.longitude,
+              rating: response.businesses[i].rating,
+              phone: response.businesses[i].phone,
+              dist: response.businesses[i].distance,
+              revCt: response.businesses[i].review_count,
+              price: response.businesses[i].price
+            });
+          }
+          // Sorts the input array first by rating then by distance
+          businesses.sort((obj1, obj2) =>
+            obj1.rating > obj2.rating
+              ? 1
+              : obj1.rating === obj2.rating
+              ? obj1.dist < obj2.dist
+                ? 1
+                : -1
+              : -1
+          );
+          businesses.reverse();
+          console.log(businesses);
+        });
+        console.log(businesses.length);
+
+        var map;
+        var restMarker = new Array();
+        var counter = 0;
+        function initMap() {
+          map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: storedLat, lng: storedLong },
+            zoom: 13
+          });
+
+          // Adds a marker for the user's location
+          var userFlag = new google.maps.Marker({
+            position: { lat: storedLat, lng: storedLong },
+            map: map,
+            title: "You are here.",
+            icon: {
+              url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+            }
+          });
+
+          for (var i = 0; i < businesses.length; i++) {
+            var userLoc = new google.maps.Marker({
+              position: {
+                lat: businesses[i].lat,
+                lng: businesses[i].long
+              },
+              map: null,
+              title: `${businesses[i].name}`
+            });
+            restMarker.push(userLoc);
+          }
+          update();
+        }
+
+        function update() {
+          if (!(businesses[counter].name === null)) {
+            document.getElementById("name").innerHTML =
+              businesses[counter].name;
+          }
+          if (!(businesses[counter].rating === null)) {
+            document.getElementById("review").innerHTML =
+              businesses[counter].rating;
+          }
+          if (!(businesses[counter].revCt === null)) {
+            document.getElementById("revCt").innerHTML =
+              businesses[counter].revCt;
+          }
+          if (!(businesses[counter].phone === null)) {
+            document.getElementById("phone").innerHTML =
+              "+" + businesses[counter].phone;
+          }
+          if (!(businesses[counter].dist === null)) {
+            document.getElementById("dist").innerHTML =
+              businesses[counter].dist;
+          }
+        }
+
+        // Updates the counter and gets the next request
+        function nextRequest() {
+          if (counter === restMarker.length) {
+            alert("There are no more restaurants that satisfy the criteria.");
+          } else {
+            restMarker[counter].setMap(null);
+            counter++;
+            restMarker[counter].setMap(map);
+            update();
+          }
+        }
+      </script>
+    </div>
   </head>
   <body>
-    <header id="title">
-      <div class="everything">
-        <h1>Restaurant Recommender</h1>
-      </div>
-    </header>
-
-    <nav id="navbar">
-      <div class="everything">
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="map.html">Recommendation Map</a></li>
-          <li><a href="yelp.html">Yelp Display</a></li>
-        </ul>
-      </div>
-    </nav>
-
-    <script>
-      const fetch = require("node-fetch");
-      global.fetch = fetch;
-      global.Headers = fetch.Headers;
-
-      // Sets the authorization key to the one generated for this project
-      var myHeaders = new Headers();
-      myHeaders.append(
-        "Authorization",
-        "Bearer p5bQJH1HPyIfJCSGlFS22FkYCWiRiDR1rQEDEfr8_MZUlzrOo4i3CEc8qVDdTdXbk1DmHJdnfuErzo4vuoS1_4tGvZB-augVp9Lg6jGaa9uV-BlBkNzho4QQP7ZRXnYx"
-      );
-
-      var lat = 34.1478;
-      var long = -118.1445;
-      var distance = 8000;
-
-      // Sets the request options for the search
-      var requestOptions = {
-        method: "GET",
-        headers: myHeaders,
-        redirect: "follow"
-      };
-
-      // Pasadena
-      // 34.1478
-      // -118.1445
-      // The search request URL
-      var url =
-        "https://api.yelp.com/v3/businesses/search?latitude=" +
-        lat +
-        "&longitude=" +
-        long +
-        "&term=restaurant&radius=" +
-        distance +
-        "&limit=50";
-
-      // Gets the requests using the Yelp Fusion API
-      function getData() {
-        var answer = new Array();
-        var temp = fetch(url, requestOptions)
-          .then(response => response.json())
-          .then(function(data) {
-            var i = 0;
-            for (i = 0; i < data.businesses.length; ++i) {
-              answer.push({
-                name: data.businesses[i].name,
-                lat: data.businesses[i].coordinates.latitude,
-                long: data.businesses[i].coordinates.longitude,
-                rating: data.businesses[i].rating,
-                phone: data.businesses[i].phone,
-                dist: data.businesses[i].distance,
-                revCt: data.businesses[i].review_count,
-                price: data.businesses[i].price
-              });
-            }
-            // Sorts the input array first by rating then by distance
-            answer.sort((obj1, obj2) =>
-              obj1.rating > obj2.rating
-                ? 1
-                : obj1.rating === obj2.rating
-                ? obj1.distance < obj2.distance
-                  ? 1
-                  : -1
-                : -1
-            );
-            answer.reverse();
-            console.log(answer);
-          })
-          .catch(error => console.log(error));
-      }
-
-      getData();
-    </script>
     <p>
-      This is the testing of the yelp page. I will try to print restaurants with
-      coordinates of Pasadena.
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem animi
+      distinctio pariatur cumque molestiae doloribus dolorem minus vel suscipit?
+      In nemo quod dolores cupiditate quidem enim dignissimos laborum laboriosam
+      maxime. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Suscipit
+      corporis, obcaecati vero quibusdam impedit cumque iusto accusantium
+      officia deleniti delectus aperiam blanditiis sapiente sunt, voluptatibus
+      dolorum maiores quidem! Amet, dolore! Lorem ipsum dolor sit, amet
+      consectetur adipisicing elit. Voluptates, quis! Nesciunt animi voluptatum
+      quo accusantium provident? Eaque corporis dolorum, rem deleniti ducimus
+      aspernatur voluptas. Dolor eum itaque fugit illum similique? Name:
+      <span id="name">_____</span> Rating: <span id="review">_____</span> Review
+      Count: <span id="revCt">_____</span> Phone:
+      <span id="phone">_____</span> Distance: <span id="dist">_____</span>
+
+      <button onclick="nextRequest()">Next</button>
     </p>
-    <button onclick="getData">This is a</button>
-    <div>
-      <p>Businesses <scan id="bus"></scan></p>
-    </div>
   </body>
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBq3tGjb7VKuNtNdiP6b4z_w9l60mkx6uI&callback=initMap"
+    async
+    defer
+  ></script>
 </html>

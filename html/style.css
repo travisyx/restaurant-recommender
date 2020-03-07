@@ -1,58 +1,58 @@
-body{
-    background-color:#fff;
-    font-size:16px;
-    margin:0;
+body {
+  background-color: #fff;
+  font-size: 16px;
+  margin: 0;
 }
 
-.everything{
-    width:80%;
-    margin:auto;
-    overflow:hidden;
+.everything {
+  width: 80%;
+  margin: auto;
+  overflow: hidden;
 }
 
-#title{
-    background-color:purple;
-    color:yellow;
+#title {
+  background-color: purple;
+  color: yellow;
 }
 
-#navbar{
-    background-color:yellow;
-    color:purple;
-    padding-left:3px;
+#navbar {
+  background-color: yellow;
+  color: purple;
+  padding-left: 3px;
 }
 
-#navbar ul{
-    padding:0;
-    list-style:none;
+#navbar ul {
+  padding: 0;
+  list-style: none;
 }
 
-#navbar li{
-    display:inline;
+#navbar li {
+  display: inline;
 }
 
-#navbar a{
-    text-decoration: none;
-    color:purple;
-    padding-right:10px;
+#navbar a {
+  text-decoration: none;
+  color: purple;
+  padding-right: 10px;
 }
 
-#navbar a:hover{
-    color:white;
+#navbar a:hover {
+  color: darkblue;
 }
 
-#navbar a:active{
-    color:darkgreen;
+#navbar a:active {
+  color: darkgreen;
 }
 
-#navbar a:visited{
-    color:black;
+#navbar a:visited {
+  color: black;
 }
 
-#backgroundtext{
-    background-color: lightgrey;
-    color:black;
+#backgroundtext {
+  background-color: lightgrey;
+  color: black;
 }
 
-#map{
-    height: 400px;
+#map {
+  height: 400px;
 }
