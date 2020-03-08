@@ -3,120 +3,78 @@
   <head>
     <title>Home</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
-    <script>
-      var lat = 0;
-      var long = 0;
-      function enableLocation() {
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(async function(position) {
-            lat = position.coords.latitude;
-            long = position.coords.longitude;
-            localStorage.setItem("latitude", lat);
-            localStorage.setItem("longitude", long);
-
-            // const data = { lat, long };
-            // const options = {
-            //   method: "POST",
-            //   headers: {
-            //     "Content-Type": "application/json"
-            //   },
-            //   body: JSON.stringify(data)
-            // };
-            // const response = await fetch("/api", options);
-            // const json = await response.json();
-            // console.log(json);
-          });
-        } else {
-          console.log("not available");
-        }
-      }
-
-      function redirect() {
-        if (
-          localStorage.getItem("latitude") === null ||
-          localStorage.getItem("longitude") === null
-        ) {
-          alert(
-            "You have not enabled the location to be set. Please allow for the location to be set."
-          );
-        } else {
-          window.location.href = "map.html";
-        }
-      }
-
-      function submitForm() {
-        if (localStorage.getItem("zcode").equals("")) {
-          alert("Please enter a zip code into the search box.");
-        } else {
-          localStorage.setItem("zcode", document.getElementById("zcode"));
-          window.location.href = "customMap.html";
-        }
-      }
+    <script src="home.js">
     </script>
   </head>
   <body>
-    <header id="title">
+    <header class="title">
       <div class="everything">
         <h1>Restaurant Recommender</h1>
       </div>
     </header>
 
-    <nav id="navbar">
+    <nav class="navbar">
       <div class="everything">
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
-          <li><a href="map.html">Recommendation Map</a></li>
-          <li><a href="yelp.html">Yelp Display</a></li>
         </ul>
       </div>
     </nav>
 
     <div class="everything">
+      <p><h3>Welcome to the Restaurant Recommender! </h3></p>
       <p>
-        Welcome to the restaurant recommender! To view recommendations, you can
-        either use custom search queries (such as a zip code or custom
-        coordinates) or your own location. If you choose to use your own
-        location, please first click the "Enable Location" button and click
-        accept to allow us to use HTML Geolocation to find where to recommend
-        restaurants near you. Then click the "Access Recommendations Using Your
-        Coordinates" button to view what we recommend. To access the about page,
-        click the "About" button above.
+        To view recommendations, you can
+        either use custom coordinates or your own location. If you choose to use
+        your own location, please first click the "Enable Location" button and
+        click accept to allow us to use HTML Geolocation to find where to
+        recommend restaurants near you. Then click the "Access Recommendations
+        Using Your Coordinates" button to view what we recommend. To access the
+        about page, click the "About" button above.
       </p>
-      <ul>
-        <li>
-          <button onclick="enableLocation()">Enable Location</button>
-          <button onclick="redirect()">
-            Access Recommendations Using Your Coordinates
-          </button>
-        </li>
-        <li>
-          <form>
-            <label for="customLatitude">Latitude</label><br />
-            <input type="number" id="customLatitude" placeholder="Latitude" />
-            <label for="customLongitude">Longitude</label><br />
-            <input type="number" id="customLongitude" placeholder="Longitude" />
-            <button id="submitCustom">Enter</button>
-          </form>
-          <script>
-            addEventListener(
-              "click",
-              document.getElementById("submitCustom"),
-              function() {
-                localStorage.setItem(
-                  "customLatitude",
-                  JSON.stringify(document.getElementById("customLatitude"))
-                );
-                localStorage.setItem(
-                  "customLongitude",
-                  JSON.stringify(document.getElementById("customLongitude"))
-                );
-                window.location.href = "customMap.html";
-              }
-            );
-          </script>
-        </li>
-      </ul>
+
+      <!-- First enables location, then redirects to use the user's location -->
+      <div class="block">
+        <h4>Your Location</h4>
+        <p>Click to enable location:</p>
+        <button onclick="enableLocation()" class="button">
+        Enable Location
+        </button>
+        <p>Click to go to the map using your location:</p>
+        <button onclick="moveToUserCoords()" class="button">
+        Access Recommendations
+        </button>
+      </div>
+
+      <!-- Creates an input area for custom input of coordinates -->
+      <div class="block">
+        <h4>Custom Coordinates</h4>
+        <p>Please enter your latitude:</p>
+        <input
+          type="number"
+          id="customLat"
+          name="customLat"
+          placeholder="Enter the latitude"
+        />
+        <p>Please enter your longitude:</p>
+        <input
+          type="number"
+          id="customLong"
+          name="customLong"
+          placeholder="Enter the longitude"
+        />
+        <button onclick="moveToCustomCoords()" class="button">Submit</button>
+      </div>
+
+      <!-- Creates an input area for a custom search query -->
+      <div class="block">
+        <h4>Custom Search Query</h4>
+        <p>Please enter the search query you would like:</p>
+        <textarea id="searchQuery" placeholder="Enter Search Query" rows="5"></textarea>
+        <button onclick="moveToCustomSearch()" class="button">Submit</button>
+      </div>
+      
     </div>
   </body>
 </html>

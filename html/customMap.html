@@ -6,121 +6,212 @@
     <title>Map</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
 
-    <!-- MOVE TO STYLE.CSS FILE -->
-    <!-- MOVE TO STYLE.CSS FILE -->
-    <!-- MOVE TO STYLE.CSS FILE -->
-    <style>
-      #map {
-        height: 400px;
-        width: 80%;
-      }
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-    </style>
-    <!-- MOVE TO STYLE.CSS FILE -->
-    <!-- MOVE TO STYLE.CSS FILE -->
-    <!-- MOVE TO STYLE.CSS FILE -->
+    <!-- Importing jquery -->
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.js"
+      integrity="sha384-mlceH9HlqLp7GMKHrj5Ara1+LvdTZVMx4S1U43/NxCvAkzIo8WJ0FE7duLel3wVo"
+      crossorigin="anonymous"
+    ></script>
 
-    <script src="ejs.js"></script>
     <!-- Loads the map from the map.js file -->
     <script>
-      var zcode = localStorage.getItem("zcode");
-      document.getElementById("hmm").innerHTML = zcode;
+      // Gets the stored search query from the home page
+      var searchQuery = localStorage.getItem("searchQuery");
+      console.log(searchQuery);
 
-      // Pasadena : lat: 34.1478, lng: -118.1445
-      var latitude = parseFloat(localStorage.getItem("latitude"));
-      var longitude = parseFloat(localStorage.getItem("longitude"));
+      // Creates an array that stores the businesses returned by the search
+      var businesses = [];
+      // The Yelp token, the cors-anywhere link, and the Yelp search link
+      var token =
+        "Bearer p5bQJH1HPyIfJCSGlFS22FkYCWiRiDR1rQEDEfr8_MZUlzrOo4i3CEc8qVDdTdXbk1DmHJdnfuErzo4vuoS1_4tGvZB-augVp9Lg6jGaa9uV-BlBkNzho4QQP7ZRXnYx";
+      var cors_anywhere = "https://cors-anywhere.herokuapp.com";
+      var yelp_search = "https://api.yelp.com/v3/businesses/search";
+      // Search settings
+      var requestObj = {
+        async: false,
+        url: cors_anywhere + "/" + yelp_search,
+        data: {
+          term: "restaurants",
+          location: searchQuery,
+          radius: 8000,
+          limit: 50
+        },
+        headers: {
+          Authorization: token
+        },
+        error: function(error) {
+          console.log(error);
+        }
+      };
+      // Performs the search
+      $.ajax(requestObj).done(function(response) {
+        // Pushes the data to the businesses array
+        for (var i = 0; i < response.businesses.length; ++i) {
+          businesses.push({
+            name: response.businesses[i].name,
+            lat: response.businesses[i].coordinates.latitude,
+            long: response.businesses[i].coordinates.longitude,
+            rating: response.businesses[i].rating,
+            phone: response.businesses[i].phone,
+            dist: response.businesses[i].distance,
+            revCt: response.businesses[i].review_count,
+            price: response.businesses[i].price,
+            location: response.businesses[i].location
+          });
+        }
+        // Sorts the input array first by rating then by distance
+        businesses.sort((obj1, obj2) =>
+          obj1.rating > obj2.rating
+            ? 1
+            : obj1.rating === obj2.rating
+            ? obj1.dist < obj2.dist
+              ? 1
+              : -1
+            : -1
+        );
+        businesses.reverse();
+        console.log(businesses);
+      });
 
+      // The map object
       var map;
+      // Array to store the markers and a counter variable
       var restMarker = new Array();
       var counter = 0;
       // Initializes the map
+
       function initMap() {
-        var latLng = { lat: latitude, lng: longitude };
+        // Creates the map at the stored location with a specified zoom
         map = new google.maps.Map(document.getElementById("map"), {
-          center: { lat: latitude, lng: longitude },
-          zoom: 15
+          center: { lat: 0, lng: 0 },
+          zoom: 14
         });
 
-        // Adds a marker for the user's location
-        var userFlag = new google.maps.Marker({
-          position: latLng,
-          map: map,
-          title: "You are here.",
-          icon: { url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png" }
-        });
-
-        for (var i = 0; i < arrMarker.length; i++) {
+        // Plots all of the businesses on a map and pushes it to the marker array
+        for (var i = 0; i < businesses.length; i++) {
           var userLoc = new google.maps.Marker({
-            position: { lat: arrMarker[i].lat, lng: arrMarker[i].lng },
+            position: {
+              lat: businesses[i].lat,
+              lng: businesses[i].long
+            },
             map: null,
-            title: `Restaurant at (${arrMarker[i].lat}, ${arrMarker[i].lng})`
+            title: `${businesses[i].name}`
           });
+          restMarker.push(userLoc);
         }
+        // Sets the flag for the first map
         update();
-        // restMarker[counter].setMap(map);
+        restMarker[counter].setMap(map);
+
+        // Moves the center of the map to the first business location
+        map.panTo(
+          new google.maps.LatLng(
+            businesses[counter].lat,
+            businesses[counter].long
+          )
+        );
       }
 
+      // Updates the map and the recommendation text
       function update() {
-        if (!(arrMarker[counter].name === null))
-          document.getElementById("name").innerHTML = arrMarker[counter].name;
-        if (!(arrMarker[counter].rating === null))
-          document.getElementById("rating").innerHTML =
-            arrMarker[counter].rating;
-        if (!(arrMarker[counter].revCt === null))
-          document.getElementById("revCt").innerHTML = arrMarker[counter].revCt;
-        if (!(arrMarker[counter].phone === null))
-          document.getElementById("phone").innerHTML = arrMarker[counter].phone;
-        if (!(arrMarker[counter].dist === null))
-          document.getElementById("dist").innerHTML = arrMarker[counter].dist;
+        if (!(businesses[counter].name === null)) {
+          document.getElementById("name").innerHTML = businesses[counter].name;
+        }
+        if (!(businesses[counter].rating === null)) {
+          document.getElementById("review").innerHTML =
+            businesses[counter].rating;
+        }
+        if (!(businesses[counter].revCt === null)) {
+          document.getElementById("revCt").innerHTML =
+            businesses[counter].revCt;
+        }
+        if (!(businesses[counter].phone === null)) {
+          document.getElementById("phone").innerHTML =
+            businesses[counter].phone;
+        }
+        if (!(businesses[counter].price == null)) {
+          document.getElementById("price").innerHTML =
+            "The price is " + businesses[counter].price + " out of $$$$.";
+        }
+        if (!(businesses[counter].location == null)) {
+          document.getElementById("location").innerHTML =
+            "They are located at " +
+            businesses[counter].location.address1 +
+            ".";
+        }
       }
 
       // Updates the counter and gets the next request
       function nextRequest() {
-        counter++;
-        update();
+        if (counter === restMarker.length) {
+          alert("There are no more restaurants that satisfy the criteria.");
+        } else {
+          restMarker[counter].setMap(null);
+          counter++;
+          restMarker[counter].setMap(map);
+          // Moves the map to business location
+          map.panTo(
+            new google.maps.LatLng(
+              businesses[counter].lat,
+              businesses[counter].long
+            )
+          );
+          update();
+        }
       }
     </script>
   </head>
   <body>
-    <header id="title">
+    <header class="title">
       <div class="everything">
         <h1>Restaurant Recommender</h1>
       </div>
     </header>
 
-    <nav id="navbar">
+    <!-- Creates the navigation bar -->
+    <nav class="navbar">
       <div class="everything">
         <ul>
-          <li><a href="about.html">About</a></li>
-          <li><a href="customMap.html">Recommendation Map</a></li>
-          <li><a href="yelp.html">Yelp Display</a></li>
           <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
         </ul>
       </div>
     </nav>
 
-    <div>
+    <!-- Input text above the map -->
+    <div class="everything">
       <p>
-        You have selected to use custom coordinates. Your flag is in blue. The
-        restaurant flags we recommend are in red.
+        The restaurant flags we recommend are in red. The map will automatically
+        center around the restaurant. If the flag is not there, the coordinates
+        for the restaurant may not be available.
       </p>
     </div>
+
     <!-- Displays the map -->
     <div id="map"></div>
-    <div>
-      <p>uhh <span id="hmm">placeholder</span></p>
-    </div>
-    <div>
-      <button onclick="update()">
+
+    <!-- Displays the text for the recommendation and the business info -->
+    <div class="rblock">
+      <p>
+        Based on the rating and the number of reviews, we recommend
+        <span id="name">_____</span>, which has a rating of
+        <span id="review">_____</span> stars based on
+        <span id="revCt">_____</span> reviews. <span id="price"></span> If you
+        would like to contact them, you can at <span id="phone">_____</span>.
+        <span id="location"></span>
+      </p>
+      <p>
+        Note that if there is a "______", the restaurant did not provide the
+        parameter for the data.
+      </p>
+
+      <!-- Creates a button that moves to the next business -->
+      <button onclick="nextRequest()">
         Not Satisfied? Click to Get Another Recommendation
       </button>
     </div>
   </body>
+
   <!-- The source for the google maps API with the key -->
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBq3tGjb7VKuNtNdiP6b4z_w9l60mkx6uI&callback=initMap"

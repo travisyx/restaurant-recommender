@@ -1,58 +1,107 @@
 body {
-  background-color: #fff;
+  background-color: #ffffed;
   font-size: 16px;
   margin: 0;
 }
+#map {
+  float: left;
+  margin-left: 5%;
+  height: 400px;
+  width: 50%;
+  height: 65%;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 
 .everything {
-  width: 80%;
+  width: 95%;
   margin: auto;
   overflow: hidden;
 }
 
-#title {
-  background-color: purple;
-  color: yellow;
+.button {
+  background-color: #f0e9ad;
+  text-align: center;
 }
 
-#navbar {
-  background-color: yellow;
-  color: purple;
-  padding-left: 3px;
+.title {
+  background-color: #cd853f;
+  color: #f0e68c;
 }
 
-#navbar ul {
+/* Settings for the navigation bar */
+.navbar {
+  background-color: #f0e68c;
+  color: #cd853f;
+}
+
+.navbar ul {
   padding: 0;
   list-style: none;
 }
 
-#navbar li {
+.navbar li {
   display: inline;
 }
 
-#navbar a {
+.navbar a {
   text-decoration: none;
-  color: purple;
+  color: #cd853f;
   padding-right: 10px;
 }
 
-#navbar a:hover {
-  color: darkblue;
+.navbar a:hover {
+  color: black;
 }
 
-#navbar a:active {
+.navbar a:active {
   color: darkgreen;
 }
 
-#navbar a:visited {
-  color: black;
+.navbar a:visited {
+  color: #cd853f;
 }
 
-#backgroundtext {
-  background-color: lightgrey;
-  color: black;
+/* Splits the home page into three sections */
+.block {
+  float: left;
+  width: 33.3%;
+  height: 250px;
+  border: 1px solid #cd853f;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
-#map {
-  height: 400px;
+.rblock {
+  float: right;
+  width: 33.3%;
+  margin-right: 5%;
+  height: 350px;
+  border: 1px solid #cd853f;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  .block {
+    float: none;
+    width: 100%;
+  }
+
+  .rblock {
+    float: none;
+    width: 100%;
+    margin-right: auto;
+    border: none;
+  }
+
+  #map {
+    margin: none;
+    width: 100%;
+  }
 }

@@ -7,28 +7,37 @@
     <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
   <body>
-    <header id="title">
+    <header class="title">
       <div class="everything">
         <h1>Restaurant Recommender</h1>
       </div>
     </header>
 
-    <nav id="navbar">
+    <nav class="navbar">
       <div class="everything">
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
-          <li><a href="map.html">Recommendation Map</a></li>
-          <li><a href="yelp.html">Yelp Display</a></li>
         </ul>
       </div>
     </nav>
 
-    <p>
-      This website was created using Node JS to host the server. HTML and
-      JavaScript were then used to create the functional attributes of the
-      website. CSS was used to style the pages. The source code is available at
-      the link:
-    </p>
+    <div class="everything">
+      <p>
+        This website was created using Node JS to host the server. HTML and
+        JavaScript were then used to create the functional attributes of the
+        website. CSS was used to style the pages. The website was deployed with
+        Heroku.
+      </p>
+      <p>
+        Known errors:
+        <ul>
+          <li>Yelp Fusion Api occasionally returns multiple of the same restaurant</li>
+          <li>The geolocation is not always precisely at the user location</li>
+          <li>Issues may arise when putting the custom coordinates in the middle of the ocean</li>
+        </ul>
+      </p>
+      <p>If there are other issues, please email me at txiang@caltech.edu.</p>
+    </div> 
   </body>
 </html>

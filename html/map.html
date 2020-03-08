@@ -6,25 +6,7 @@
     <title>Map</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
 
-    <!-- MOVE TO STYLE.CSS FILE -->
-    <!-- MOVE TO STYLE.CSS FILE -->
-    <!-- MOVE TO STYLE.CSS FILE -->
-    <style>
-      #map {
-        height: 400px;
-        width: 80%;
-      }
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-    </style>
-    <!-- MOVE TO STYLE.CSS FILE -->
-    <!-- MOVE TO STYLE.CSS FILE -->
-    <!-- MOVE TO STYLE.CSS FILE -->
-
+    <!-- Importing jquery -->
     <script
       src="https://code.jquery.com/jquery-3.4.1.js"
       integrity="sha384-mlceH9HlqLp7GMKHrj5Ara1+LvdTZVMx4S1U43/NxCvAkzIo8WJ0FE7duLel3wVo"
@@ -33,42 +15,47 @@
 
     <!-- Loads the map from the map.js file -->
     <script>
-      var storedLat = parseFloat(localStorage.getItem("latitude"));
-      var storedLong = parseFloat(localStorage.getItem("longitude"));
-      var businesses = [];
+      // Gets the stored coordinates from the home page
+      var storedLat;
+      var storedLong;
+      var isCustom = localStorage.getItem("isCustom");
+      if (isCustom.localeCompare("true") == 0) {
+        storedLat = parseFloat(localStorage.getItem("customLat"));
+        storedLong = parseFloat(localStorage.getItem("customLong"));
+      } else {
+        storedLat = parseFloat(localStorage.getItem("latitude"));
+        storedLong = parseFloat(localStorage.getItem("longitude"));
+      }
 
+      // Creates an array that stores the businesses returned by the search
+      var businesses = [];
+      // The Yelp token, the cors-anywhere link, and the Yelp search link
       var token =
         "Bearer p5bQJH1HPyIfJCSGlFS22FkYCWiRiDR1rQEDEfr8_MZUlzrOo4i3CEc8qVDdTdXbk1DmHJdnfuErzo4vuoS1_4tGvZB-augVp9Lg6jGaa9uV-BlBkNzho4QQP7ZRXnYx";
       var cors_anywhere = "https://cors-anywhere.herokuapp.com";
       var yelp_search = "https://api.yelp.com/v3/businesses/search";
-      function clientCallback() {
-        console.log("Made it to the client callback.");
-      }
+      // Search settings
       var requestObj = {
         async: false,
         url: cors_anywhere + "/" + yelp_search,
         data: {
           term: "restaurants",
-          latitude: localStorage.getItem("latitude"),
-          longitude: localStorage.getItem("longitude"),
+          latitude: storedLat,
+          longitude: storedLong,
           radius: 8000,
           limit: 50
         },
         headers: {
           Authorization: token
         },
-        error: function(jqXHR, textStatus, errorThrown) {
-          console.log(
-            "AJAX error, jqXHR = ",
-            jqXHR,
-            ", textStatus = ",
-            textStatus,
-            ", errorThrown = ",
-            errorThrown
-          );
+        error: function(error) {
+          console.log(error);
         }
       };
+
+      // Performs the search
       $.ajax(requestObj).done(function(response) {
+        // Pushes the data to the businesses array
         for (var i = 0; i < response.businesses.length; ++i) {
           businesses.push({
             name: response.businesses[i].name,
@@ -92,14 +79,17 @@
             : -1
         );
         businesses.reverse();
-        console.log(businesses);
       });
-      console.log(businesses.length);
 
+      // The map object
       var map;
+      // Array to store the markers and a counter variable
       var restMarker = new Array();
       var counter = 0;
+      // Initializes the map
+
       function initMap() {
+        // Creates the map at the stored location with a specified zoom
         map = new google.maps.Map(document.getElementById("map"), {
           center: { lat: storedLat, lng: storedLong },
           zoom: 13
@@ -115,6 +105,7 @@
           }
         });
 
+        // Plots all of the businesses on a map and pushes it to the marker array
         for (var i = 0; i < businesses.length; i++) {
           var userLoc = new google.maps.Marker({
             position: {
@@ -126,10 +117,12 @@
           });
           restMarker.push(userLoc);
         }
+        // Sets the flag for the first map
         update();
         restMarker[counter].setMap(map);
       }
 
+      // Updates the map and the recommendation text
       function update() {
         if (!(businesses[counter].name === null)) {
           document.getElementById("name").innerHTML = businesses[counter].name;
@@ -163,62 +156,72 @@
           restMarker[counter].setMap(null);
           counter++;
           restMarker[counter].setMap(map);
+          // Moves the map to halfway between the search coordinates and the business
+          map.panTo(
+            new google.maps.LatLng(
+              (businesses[counter].lat + storedLat) / 2,
+              (businesses[counter].long + storedLong) / 2
+            )
+          );
           update();
         }
       }
     </script>
   </head>
   <body>
-    <header id="title">
+    <header class="title">
       <div class="everything">
         <h1>Restaurant Recommender</h1>
       </div>
     </header>
 
-    <nav id="navbar">
+    <!-- Creates the navigation bar -->
+    <nav class="navbar">
       <div class="everything">
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="about.html">About</a></li>
-          <li><a href="map.html">Recommendation Map</a></li>
-          <li><a href="yelp.html">Yelp Display</a></li>
         </ul>
       </div>
     </nav>
 
-    <div>
+    <!-- Input text above the map -->
+    <div class="everything">
       <p>
-        You have selected to use your own coordinates. Your flag is in blue. The
-        restaurant flags we recommend are in red. Note that if you do not see
-        the flag, you may need to adjust the map. Depending on your search
-        parameters, the flag may be offscreen. If the flag is still not there,
-        the restaurant may not have provided their coordinates.
+        Your flag is in blue. The restaurant flags we recommend are in red. Note
+        that if you do not see the flag, you may need to adjust the map.
+        Depending on your search parameters, the flag may be offscreen. If the
+        flag is still not there, the restaurant may not have provided their
+        coordinates.
       </p>
     </div>
+
     <!-- Displays the map -->
     <div id="map"></div>
-    <div>
+
+    <!-- Displays the text for the recommendation and the business info -->
+    <div class="rblock">
       <p>
-        Using an equation that balances rating and the number of review, we
-        recommend <span id="name">_____</span>, which has a rating of
+        Based on the rating and the number of reviews, we recommend
+        <span id="name">_____</span>, which has a rating of
         <span id="review">_____</span> stars based on
         <span id="revCt">_____</span> reviews. This restaurant is
         <span id="dist">_____</span> meters from you.
         <span id="price"></span> If you would like to contact them, you can at
         <span id="phone">_____</span>.
       </p>
-
       <p>
         Note that if there is a "______", the restaurant did not provide the
         parameter for the data.
       </p>
-    </div>
-    <div>
+
+      <!-- Creates a button that moves to the next business -->
       <button onclick="nextRequest()">
         Not Satisfied? Click to Get Another Recommendation
       </button>
     </div>
   </body>
+
   <!-- The source for the google maps API with the key -->
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBq3tGjb7VKuNtNdiP6b4z_w9l60mkx6uI&callback=initMap"
