@@ -2,9 +2,10 @@
 <html>
   <head>
     <title>Home</title>
+    <!-- Style sheet -->
     <link rel="stylesheet" type="text/css" href="style.css" />
-    <script src="home.js">
-    </script>
+    <!-- Javascript code for the home page functionality -->
+    <script src="home.js"></script>
   </head>
   <body>
     <header class="title">
@@ -12,7 +13,7 @@
         <h1>Restaurant Recommender</h1>
       </div>
     </header>
-
+    <!-- Creates the navigation bar for the home page -->
     <nav class="navbar">
       <div class="everything">
         <ul>
@@ -21,27 +22,23 @@
         </ul>
       </div>
     </nav>
-
+    <!-- Creates the instruction paragraph for the home page -->
     <div class="everything">
       <p><h3>Welcome to the Restaurant Recommender! </h3></p>
       <p>
-        To view recommendations, you can
-        either use custom coordinates or your own location. If you choose to use
-        your own location, please first click the "Enable Location" button and
-        click accept to allow us to use HTML Geolocation to find where to
-        recommend restaurants near you. Then click the "Access Recommendations
-        Using Your Coordinates" button to view what we recommend. To access the
-        about page, click the "About" button above.
+        To view recommendations, you can either use custom coordinates, your own location, or a custom search. If you choose to use your own location, please first click the "Enable Location" button and click accept to allow us to use HTML Geolocation to find where to recommend restaurants near you. Then click the "Access Recommendations Using Your Coordinates" button to view what we recommend. If you want to use custom coordinates, enter your latitude and longitude into the respective spots on the form and then hit "Submit." For a custom search, type the location you desire and hit "Submit." Note that these options only search by location. To access the about page, click the "About" button above.
       </p>
 
       <!-- First enables location, then redirects to use the user's location -->
       <div class="block">
         <h4>Your Location</h4>
         <p>Click to enable location:</p>
+        <!-- Enables the location and stores it if the user allows it -->
         <button onclick="enableLocation()" class="button">
         Enable Location
         </button>
         <p>Click to go to the map using your location:</p>
+        <!-- Redirects to the map and verifies the input is valid -->
         <button onclick="moveToUserCoords()" class="button">
         Access Recommendations
         </button>
@@ -64,14 +61,15 @@
           name="customLong"
           placeholder="Enter the longitude"
         />
+        <!-- Redirects to the map and verifies the data is valid -->
         <button onclick="moveToCustomCoords()" class="button">Submit</button>
       </div>
 
       <!-- Creates an input area for a custom search query -->
       <div class="block">
         <h4>Custom Search Query</h4>
-        <p>Please enter the search query you would like:</p>
-        <textarea id="searchQuery" placeholder="Enter Search Query" rows="5"></textarea>
+        <p>Please enter the location you desire (i.e. NYC, Pasadena, etc.):</p>
+        <textarea id="searchQuery" placeholder="Enter Location" rows="5"></textarea>
         <button onclick="moveToCustomSearch()" class="button">Submit</button>
       </div>
       

@@ -13,7 +13,7 @@
       crossorigin="anonymous"
     ></script>
 
-    <!-- Loads the map from the map.js file -->
+    <!-- Loads the map -->
     <script>
       // Gets the stored coordinates from the home page
       var storedLat;
@@ -140,7 +140,13 @@
             businesses[counter].phone;
         }
         if (!(businesses[counter].dist === null)) {
-          document.getElementById("dist").innerHTML = businesses[counter].dist;
+          document.getElementById("dist").innerHTML = businesses[
+            counter
+          ].dist.toFixed(2);
+          document.getElementById("distInMiles").innerHTML =
+            "(" +
+            (businesses[counter].dist * 0.00062137).toFixed(2) +
+            " miles from you)";
         }
         if (!(businesses[counter].price == null)) {
           document.getElementById("price").innerHTML =
@@ -203,12 +209,12 @@
     <div class="rblock">
       <p>
         Based on the rating and the number of reviews, we recommend
-        <span id="name">_____</span>, which has a rating of
-        <span id="review">_____</span> stars based on
+        <i><span id="name">_____</span></i
+        >, which has a rating of <span id="review">_____</span> stars based on
         <span id="revCt">_____</span> reviews. This restaurant is
-        <span id="dist">_____</span> meters from you.
-        <span id="price"></span> If you would like to contact them, you can at
-        <span id="phone">_____</span>.
+        <span id="dist">_____</span> meters from you
+        <span id="distInMiles">()</span>. <span id="price"></span> If you would
+        like to contact them, you can at <span id="phone">_____</span>.
       </p>
       <p>
         Note that if there is a "______", the restaurant did not provide the
@@ -216,7 +222,7 @@
       </p>
 
       <!-- Creates a button that moves to the next business -->
-      <button onclick="nextRequest()">
+      <button onclick="nextRequest()" class="button">
         Not Satisfied? Click to Get Another Recommendation
       </button>
     </div>
