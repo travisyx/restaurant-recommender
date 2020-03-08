@@ -1,5 +1,7 @@
 var lat = 0;
 var long = 0;
+
+// Asks for permission to get the user's coordinates and stores them if allowed
 function enableLocation() {
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(async function(position) {
@@ -9,10 +11,10 @@ function enableLocation() {
       sessionStorage.setItem("longitude", long);
     });
   } else {
-    console.log("not available");
+    console.log("Geolocation not available");
   }
 }
-
+// Moves to the map
 function moveToUserCoords() {
   if (
     sessionStorage.getItem("latitude") === null ||
@@ -30,6 +32,7 @@ function moveToUserCoords() {
     window.location.href = "map.html";
   }
 }
+// Stores what is inputted for the coordinates and moves to the map
 function moveToCustomCoords() {
   var testLat = document.getElementById("customLat").value;
   var testLong = document.getElementById("customLong").value;
@@ -59,7 +62,7 @@ function moveToCustomCoords() {
     window.location.href = "map.html";
   }
 }
-
+// Stores what is inputted from the search query and moves to the map
 function moveToCustomSearch() {
   var testSearch = document.getElementById("searchQuery").value;
   if (testSearch == null || testSearch == "") {

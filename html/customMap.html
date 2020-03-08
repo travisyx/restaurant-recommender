@@ -43,8 +43,8 @@
           console.log(error);
         }
       };
-      if (pref.localeCompare("") === 0) {
-        pref.data = {
+      if (!(pref.localeCompare("") === 0)) {
+        requestObj.data = {
           term: "restaurants",
           location: searchQuery,
           radius: 8000,
@@ -79,7 +79,6 @@
             : -1
         );
         businesses.reverse();
-        console.log(businesses);
       });
 
       // The map object

@@ -26,7 +26,7 @@
     <div class="everything">
       <p><h3>Welcome to the Restaurant Recommender! </h3></p>
       <p>
-        To view recommendations, you can either use custom coordinates, your own location, or a custom search. If you choose to use your own location, please first click the "Enable Location" button and click accept to allow us to use HTML Geolocation to find where to recommend restaurants near you. Then click the "Access Recommendations Using Your Coordinates" button to view what we recommend. If you want to use custom coordinates, enter your latitude and longitude into the respective spots on the form and then hit "Submit." For a custom search, type the location you desire and hit "Submit." Note that these options only search by location. To access the about page, click the "About" button above.
+        To view recommendations, you can either use custom coordinates, your own location, or a custom search. If you choose to use your own location, please first click the "Enable Location" button and click accept to allow us to use HTML Geolocation to find where to recommend restaurants near you. Then click the "Access Recommendations" button to view what we recommend. If you want to use custom coordinates, enter your latitude and longitude into the respective spots on the form and then hit "Submit." For a custom search, type the location you desire and hit "Submit." Note that these options only search by location. If you have any food preferences, these can be included*. To access the about page, click the "About" button above.
       </p>
 
       <!-- First enables location, then redirects to use the user's location -->
@@ -97,6 +97,6 @@
         <button onclick="moveToCustomSearch()" class="button">Submit</button>
       </div>
     </div>
-    <footer>*Note that the input has to be a Yelp recognized category or alias (i.e. if Chinese food is desired, enter "Chinese" instead of "Chinese food"). If it is not, it will not search for the right results. Specific types of food can also be searched up, such as "tacos." </footer>
+    <footer class="everything">*Note that the input has to be a Yelp recognized category or alias (i.e. if Chinese food is desired, enter "Chinese" instead of "Chinese food"), which can make the search results somewhat inconsistent. If it is not, it will treat it as if the preference was not included. Specific types of food can also be searched up, such as "tacos." </footer>
   </body>
 </html>
