@@ -32,13 +32,21 @@
       <!-- First enables location, then redirects to use the user's location -->
       <div class="block">
         <h4>Your Location</h4>
-        <p>Click to enable location:</p>
         <!-- Enables the location and stores it if the user allows it -->
+        <p>Click to enable location:</p>
         <button onclick="enableLocation()" class="button">
         Enable Location
         </button>
-        <p>Click to go to the map using your location:</p>
+        <!-- Adds any food preferences -->
+        <p>Enter any food preferences* (types of food, optional):</p>
+        <input
+          type="text"
+          id="prefUserLoc"
+          name="prefUserLoc"
+          placeholder="Enter any food preferences"
+        />
         <!-- Redirects to the map and verifies the input is valid -->
+        <p>Click to go to the map using your location:</p>
         <button onclick="moveToUserCoords()" class="button">
         Access Recommendations
         </button>
@@ -61,6 +69,14 @@
           name="customLong"
           placeholder="Enter the longitude"
         />
+        <!-- Adds any food preferences -->
+        <p>Enter any food preferences* (types of food, optional):</p>
+        <input
+          type="text"
+          id="prefCustomLoc"
+          name="prefCustomLoc"
+          placeholder="Enter any food preferences"
+        />
         <!-- Redirects to the map and verifies the data is valid -->
         <button onclick="moveToCustomCoords()" class="button">Submit</button>
       </div>
@@ -70,9 +86,17 @@
         <h4>Custom Search Query</h4>
         <p>Please enter the location you desire (i.e. NYC, Pasadena, etc.):</p>
         <textarea id="searchQuery" placeholder="Enter Location" rows="5"></textarea>
+        <!-- Adds any food preferences -->
+        <p>Enter any food preferences* (types of food, optional):</p>
+        <input
+          type="text"
+          id="prefSearchQuery"
+          name="prefSearchQuery"
+          placeholder="Enter any food preferences"
+        />
         <button onclick="moveToCustomSearch()" class="button">Submit</button>
       </div>
-      
     </div>
+    <footer>*Note that the input has to be a Yelp recognized category or alias (i.e. if Chinese food is desired, enter "Chinese" instead of "Chinese food"). If it is not, it will not search for the right results. Specific types of food can also be searched up, such as "tacos." </footer>
   </body>
 </html>

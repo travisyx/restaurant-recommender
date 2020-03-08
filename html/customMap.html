@@ -15,9 +15,9 @@
 
     <!-- Loads the map from the map.js file -->
     <script>
-      // Gets the stored search query from the home page
-      var searchQuery = localStorage.getItem("searchQuery");
-      console.log(searchQuery);
+      // Gets the stored search query and preference from the home page
+      var searchQuery = sessionStorage.getItem("searchQuery");
+      var pref = sessionStorage.getItem("prefSearchQuery");
 
       // Creates an array that stores the businesses returned by the search
       var businesses = [];
@@ -43,6 +43,15 @@
           console.log(error);
         }
       };
+      if (pref.localeCompare("") === 0) {
+        pref.data = {
+          term: "restaurants",
+          location: searchQuery,
+          radius: 8000,
+          limit: 50,
+          categories: pref
+        };
+      }
       // Performs the search
       $.ajax(requestObj).done(function(response) {
         // Pushes the data to the businesses array

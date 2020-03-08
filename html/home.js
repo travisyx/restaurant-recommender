@@ -5,8 +5,8 @@ function enableLocation() {
     navigator.geolocation.getCurrentPosition(async function(position) {
       lat = position.coords.latitude;
       long = position.coords.longitude;
-      localStorage.setItem("latitude", lat);
-      localStorage.setItem("longitude", long);
+      sessionStorage.setItem("latitude", lat);
+      sessionStorage.setItem("longitude", long);
     });
   } else {
     console.log("not available");
@@ -15,14 +15,18 @@ function enableLocation() {
 
 function moveToUserCoords() {
   if (
-    localStorage.getItem("latitude") === null ||
-    localStorage.getItem("longitude") === null
+    sessionStorage.getItem("latitude") === null ||
+    sessionStorage.getItem("longitude") === null
   ) {
     alert(
       "You have not enabled the location to be set. Please allow for the location to be set."
     );
   } else {
-    localStorage.setItem("isCustom", "false");
+    sessionStorage.setItem("isCustom", "false");
+    sessionStorage.setItem(
+      "prefUserLoc",
+      document.getElementById("prefUserLoc").value
+    );
     window.location.href = "map.html";
   }
 }
@@ -39,15 +43,19 @@ function moveToCustomCoords() {
   ) {
     alert("Please enter valid coordinates.");
   } else {
-    localStorage.setItem(
+    sessionStorage.setItem(
       "customLat",
       document.getElementById("customLat").value
     );
-    localStorage.setItem(
+    sessionStorage.setItem(
       "customLong",
       document.getElementById("customLong").value
     );
-    localStorage.setItem("isCustom", "true");
+    sessionStorage.setItem(
+      "prefCustomLoc",
+      document.getElementById("prefCustomLoc").value
+    );
+    sessionStorage.setItem("isCustom", "true");
     window.location.href = "map.html";
   }
 }
@@ -57,9 +65,13 @@ function moveToCustomSearch() {
   if (testSearch == null || testSearch == "") {
     alert("The search query is empty.");
   } else {
-    localStorage.setItem(
+    sessionStorage.setItem(
       "searchQuery",
       document.getElementById("searchQuery").value
+    );
+    sessionStorage.setItem(
+      "prefSearchQuery",
+      document.getElementById("prefSearchQuery").value
     );
     window.location.href = "customMap.html";
   }

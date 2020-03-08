@@ -15,16 +15,19 @@
 
     <!-- Loads the map -->
     <script>
-      // Gets the stored coordinates from the home page
+      // Gets the stored coordinates from the home page and preferences
       var storedLat;
       var storedLong;
-      var isCustom = localStorage.getItem("isCustom");
+      var pref = "";
+      var isCustom = sessionStorage.getItem("isCustom");
       if (isCustom.localeCompare("true") == 0) {
-        storedLat = parseFloat(localStorage.getItem("customLat"));
-        storedLong = parseFloat(localStorage.getItem("customLong"));
+        storedLat = parseFloat(sessionStorage.getItem("customLat"));
+        storedLong = parseFloat(sessionStorage.getItem("customLong"));
+        pref = sessionStorage.getItem("prefCustomLoc");
       } else {
-        storedLat = parseFloat(localStorage.getItem("latitude"));
-        storedLong = parseFloat(localStorage.getItem("longitude"));
+        storedLat = parseFloat(sessionStorage.getItem("latitude"));
+        storedLong = parseFloat(sessionStorage.getItem("longitude"));
+        pref = sessionStorage.getItem("prefUserLoc");
       }
 
       // Creates an array that stores the businesses returned by the search
@@ -52,6 +55,16 @@
           console.log(error);
         }
       };
+      if (!(pref.localeCompare("") === 0)) {
+        requestObj.data = {
+          term: "restaurants",
+          latitude: storedLat,
+          longitude: storedLong,
+          radius: 8000,
+          limit: 50,
+          categories: pref
+        };
+      }
 
       // Performs the search
       $.ajax(requestObj).done(function(response) {
