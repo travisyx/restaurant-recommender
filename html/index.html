@@ -2,8 +2,10 @@
 <html>
   <head>
     <title>Home</title>
+
     <!-- Style sheet -->
     <link rel="stylesheet" type="text/css" href="style.css" />
+    
     <!-- Javascript code for the home page functionality -->
     <script src="home.js"></script>
   </head>
@@ -13,6 +15,7 @@
         <h1>Restaurant Recommender</h1>
       </div>
     </header>
+
     <!-- Creates the navigation bar for the home page -->
     <nav class="navbar">
       <div class="everything">
@@ -22,6 +25,7 @@
         </ul>
       </div>
     </nav>
+
     <!-- Creates the instruction paragraph for the home page -->
     <div class="everything">
       <p><h3>Welcome to the Restaurant Recommender! </h3></p>
@@ -32,11 +36,13 @@
       <!-- First enables location, then redirects to use the user's location -->
       <div class="block">
         <h4>Your Location</h4>
+        
         <!-- Enables the location and stores it if the user allows it -->
         <p>Click to enable location:</p>
         <button onclick="enableLocation()" class="button">
         Enable Location
         </button>
+        
         <!-- Adds any food preferences -->
         <p>Enter any food preferences* (types of food, optional):</p>
         <input
@@ -45,6 +51,7 @@
           name="prefUserLoc"
           placeholder="Enter any food preferences"
         />
+        
         <!-- Redirects to the map and verifies the input is valid -->
         <p>Click to go to the map using your location:</p>
         <button onclick="moveToUserCoords()" class="button">
@@ -65,10 +72,11 @@
         <p>Please enter your longitude:</p>
         <input
           type="number"
-          id="customLong"
-          name="customLong"
+          id="customLng"
+          name="customLng"
           placeholder="Enter the longitude"
         />
+        
         <!-- Adds any food preferences -->
         <p>Enter any food preferences* (types of food, optional):</p>
         <input
@@ -77,6 +85,7 @@
           name="prefCustomLoc"
           placeholder="Enter any food preferences"
         />
+        
         <!-- Redirects to the map and verifies the data is valid -->
         <button onclick="moveToCustomCoords()" class="button">Submit</button>
       </div>
@@ -84,8 +93,9 @@
       <!-- Creates an input area for a custom search query -->
       <div class="block">
         <h4>Custom Search Query</h4>
-        <p>Please enter the location you desire (i.e. NYC, Pasadena, etc.):</p>
+        <p>Please enter the location to be searched around (i.e. NYC, Caltech, etc.):</p>
         <textarea id="searchQuery" placeholder="Enter Location" rows="5"></textarea>
+        
         <!-- Adds any food preferences -->
         <p>Enter any food preferences* (types of food, optional):</p>
         <input

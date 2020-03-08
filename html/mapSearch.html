@@ -17,53 +17,98 @@
     <script>
       // Gets the stored coordinates from the home page and preferences
       var storedLat;
-      var storedLong;
+      var storedLng;
+      var searchQuery;
       var pref = "";
       var isCustom = sessionStorage.getItem("isCustom");
-      if (isCustom.localeCompare("true") == 0) {
+      var customSearch = false;
+
+      // Changes the variables to the stored values
+      if (isCustom.localeCompare("customCoords") == 0) {
         storedLat = parseFloat(sessionStorage.getItem("customLat"));
-        storedLong = parseFloat(sessionStorage.getItem("customLong"));
+        storedLng = parseFloat(sessionStorage.getItem("customLng"));
         pref = sessionStorage.getItem("prefCustomLoc");
-      } else {
+      } else if (isCustom.localeCompare("userCoords") == 0) {
         storedLat = parseFloat(sessionStorage.getItem("latitude"));
-        storedLong = parseFloat(sessionStorage.getItem("longitude"));
+        storedLng = parseFloat(sessionStorage.getItem("longitude"));
         pref = sessionStorage.getItem("prefUserLoc");
+      } else {
+        pref = sessionStorage.getItem("prefSearchQuery");
+        searchQuery = sessionStorage.getItem("searchQuery");
+        customSearch = true;
       }
 
       // Creates an array that stores the businesses returned by the search
       var businesses = [];
+
       // The Yelp token, the cors-anywhere link, and the Yelp search link
       var token =
         "Bearer p5bQJH1HPyIfJCSGlFS22FkYCWiRiDR1rQEDEfr8_MZUlzrOo4i3CEc8qVDdTdXbk1DmHJdnfuErzo4vuoS1_4tGvZB-augVp9Lg6jGaa9uV-BlBkNzho4QQP7ZRXnYx";
       var cors_anywhere = "https://cors-anywhere.herokuapp.com";
       var yelp_search = "https://api.yelp.com/v3/businesses/search";
+
       // Search settings
-      var requestObj = {
-        async: false,
-        url: cors_anywhere + "/" + yelp_search,
-        data: {
-          term: "restaurants",
-          latitude: storedLat,
-          longitude: storedLong,
-          radius: 8000,
-          limit: 50
-        },
-        headers: {
-          Authorization: token
-        },
-        error: function(error) {
-          console.log(error);
-        }
-      };
-      if (!(pref.localeCompare("") === 0)) {
-        requestObj.data = {
-          term: "restaurants",
-          latitude: storedLat,
-          longitude: storedLong,
-          radius: 8000,
-          limit: 50,
-          categories: pref
+      var requestObj;
+      console.log(pref);
+      if (customSearch) {
+        requestObj = {
+          async: false,
+          url: cors_anywhere + "/" + yelp_search,
+          data: {
+            term: "restaurants",
+            location: searchQuery,
+            radius: 8000,
+            limit: 50
+          },
+          headers: {
+            Authorization: token
+          },
+          error: function(error) {
+            console.log(error);
+          }
         };
+      } else {
+        requestObj = {
+          async: false,
+          url: cors_anywhere + "/" + yelp_search,
+          data: {
+            term: "restaurants",
+            latitude: storedLat,
+            longitude: storedLng,
+            radius: 8000,
+            limit: 50
+          },
+          headers: {
+            Authorization: token
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        };
+      }
+
+      // Tests if preferences need to be added to the search settings
+      if (customSearch) {
+        if (!(pref.localeCompare("") === 0)) {
+          requestObj.data = {
+            term: "restaurants",
+            location: searchQuery,
+            radius: 8000,
+            limit: 50,
+            categories: pref
+          };
+        }
+      } else {
+        if (!(pref.localeCompare("") === 0)) {
+          requestObj.data = {
+            term: "restaurants",
+            latitude: storedLat,
+            longitude: storedLng,
+            radius: 8000,
+            limit: 50,
+            categories: pref
+          };
+        }
       }
 
       // Performs the search
@@ -73,85 +118,120 @@
           businesses.push({
             name: response.businesses[i].name,
             lat: response.businesses[i].coordinates.latitude,
-            long: response.businesses[i].coordinates.longitude,
+            lng: response.businesses[i].coordinates.longitude,
             rating: response.businesses[i].rating,
             phone: response.businesses[i].phone,
             dist: response.businesses[i].distance,
             revCt: response.businesses[i].review_count,
-            price: response.businesses[i].price
+            price: response.businesses[i].price,
+            location: response.businesses[i].location
           });
         }
-        // Sorts the input array first by rating then by distance
+
+        // Sorts the input array first by rating then by number of reviews
         businesses.sort((obj1, obj2) =>
           obj1.rating > obj2.rating
             ? 1
             : obj1.rating === obj2.rating
-            ? obj1.dist < obj2.dist
+            ? obj1.revCt > obj2.revCt
               ? 1
               : -1
             : -1
         );
         businesses.reverse();
+
+        console.log(businesses);
       });
 
       // The map object
       var map;
+
       // Array to store the markers and a counter variable
       var restMarker = new Array();
       var counter = 0;
-      // Initializes the map
 
+      // Initializes the map
       function initMap() {
         // Creates the map at the stored location with a specified zoom
-        map = new google.maps.Map(document.getElementById("map"), {
-          center: { lat: storedLat, lng: storedLong },
-          zoom: 13
-        });
+        if (!customSearch) {
+          map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: storedLat, lng: storedLng },
+            zoom: 13
+          });
+        } else {
+          map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: 0, lng: 0 },
+            zoom: 14
+          });
+        }
 
-        // Adds a marker for the user's location
-        var userFlag = new google.maps.Marker({
-          position: { lat: storedLat, lng: storedLong },
-          map: map,
-          title: "You are here.",
-          icon: {
-            url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-          }
-        });
+        // Adds a marker for the user's location if it is not a custom search
+        if (!customSearch) {
+          var userFlag = new google.maps.Marker({
+            position: { lat: storedLat, lng: storedLng },
+            map: map,
+            title: "You are here.",
+            icon: {
+              url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+            }
+          });
+        }
 
         // Plots all of the businesses on a map and pushes it to the marker array
+        // Does not plot all at once as it makes it difficult to see
         for (var i = 0; i < businesses.length; i++) {
           var userLoc = new google.maps.Marker({
             position: {
               lat: businesses[i].lat,
-              lng: businesses[i].long
+              lng: businesses[i].lng
             },
             map: null,
             title: `${businesses[i].name}`
           });
           restMarker.push(userLoc);
         }
+
         // Sets the flag for the first map
         update();
         restMarker[counter].setMap(map);
+
+        // If it is a custom search, pan to first business
+        if (customSearch) {
+          map.panTo(
+            new google.maps.LatLng(
+              businesses[counter].lat,
+              businesses[counter].lng
+            )
+          );
+        }
       }
 
       // Updates the map and the recommendation text
       function update() {
+        // Tests if the name is null
         if (!(businesses[counter].name === null)) {
           document.getElementById("name").innerHTML = businesses[counter].name;
         }
+
+        // Tests if the rating is null
         if (!(businesses[counter].rating === null)) {
           document.getElementById("review").innerHTML =
             businesses[counter].rating;
         }
+
+        // Tests if the review count is null
         if (!(businesses[counter].revCt === null)) {
           document.getElementById("revCt").innerHTML =
             businesses[counter].revCt;
         }
+
+        // Tests if the phone number is null
         if (!(businesses[counter].phone === null)) {
           document.getElementById("phone").innerHTML =
             businesses[counter].phone;
         }
+
+        // Tests if the distance is null
         if (!(businesses[counter].dist === null)) {
           document.getElementById("dist").innerHTML = businesses[
             counter
@@ -161,6 +241,8 @@
             (businesses[counter].dist * 0.00062137).toFixed(2) +
             " miles from you)";
         }
+
+        // Tests if price is null
         if (!(businesses[counter].price == null)) {
           document.getElementById("price").innerHTML =
             "The price is " + businesses[counter].price + " out of $$$$.";
@@ -175,15 +257,33 @@
           restMarker[counter].setMap(null);
           counter++;
           restMarker[counter].setMap(map);
-          // Moves the map to halfway between the search coordinates and the business
-          map.panTo(
-            new google.maps.LatLng(
-              (businesses[counter].lat + storedLat) / 2,
-              (businesses[counter].long + storedLong) / 2
-            )
-          );
+
+          // Tests where the map should pan to
+          if (!customSearch) {
+            // Moves halfway between the user's and business's
+            // location
+            map.panTo(
+              new google.maps.LatLng(
+                (businesses[counter].lat + storedLat) / 2,
+                (businesses[counter].lng + storedLng) / 2
+              )
+            );
+          } else {
+            // Pans to the business location
+            map.panTo(
+              new google.maps.LatLng(
+                businesses[counter].lat,
+                businesses[counter].lng
+              )
+            );
+          }
           update();
         }
+      }
+    </script>
+    <script>
+      function returnHome() {
+        window.location.href = "index.html";
       }
     </script>
   </head>
@@ -228,15 +328,17 @@
         <span id="dist">_____</span> meters from you
         <span id="distInMiles">()</span>. <span id="price"></span> If you would
         like to contact them, you can at <span id="phone">_____</span>.
-      </p>
-      <p>
-        Note that if there is a "______", the restaurant did not provide the
-        parameter for the data.
+        <span id="location"></span>
       </p>
 
       <!-- Creates a button that moves to the next business -->
       <button onclick="nextRequest()" class="button">
         Not Satisfied? Click to Get Another Recommendation
+      </button>
+
+      <!-- Creates a button that returns home -->
+      <button onclick="returnHome()" class="button">
+        Return Home
       </button>
     </div>
   </body>

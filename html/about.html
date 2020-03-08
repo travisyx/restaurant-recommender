@@ -12,6 +12,7 @@
         <h1>Restaurant Recommender</h1>
       </div>
     </header>
+    
     <!-- Creates the navbar for the about page -->
     <nav class="navbar">
       <div class="everything">
@@ -21,21 +22,23 @@
         </ul>
       </div>
     </nav>
+    
     <!-- Displays the text and known errors -->
     <div class="everything">
       <p>
-        This website was created using Node JS to host the server. HTML and
-        JavaScript were then used to create the functional attributes of the
-        website. CSS was used to style the pages. The website was deployed with
-        Heroku.
+        This website was created using Node JS to host the server. HTML and JavaScript were then used to create the functional attributes of the website. CSS was used to style the pages. The website was deployed with Heroku.
       </p>
       <p>
-        Known errors:
+        Future improvements:
+        <ul>
+          <li>Make the search preferences feature more consistent</li>
+          <li>Expand to more than restaurants (i.e. bars, sporting events)</li>
+        </ul>
+
+        Tested errors:
         <ul>
           <li>Yelp Fusion Api occasionally returns multiple of the same restaurant</li>
-          <li>The geolocation is not always precisely at the user location</li>
-          <li>Issues may arise when putting the custom coordinates in the middle of the ocean</li>
-          <li>The search preferences feature can be fairly hit or miss</li>
+          <li>Issues may arise when putting the custom coordinates in the middle of the ocean (specifically (0,0))</li>
         </ul>
       </p>
       <p>If there are other issues, please email me at txiang@caltech.edu.</p>
