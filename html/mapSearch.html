@@ -208,6 +208,19 @@
 
       // Updates the map and the recommendation text
       function update() {
+        // Tests if there are any recommendations
+        if (businesses.length === 0) {
+          // Hides the business template
+          document.getElementById("empty").style.display = "none";
+
+          // Displays the "done" message
+          document.getElementById("done").innerHTML =
+            "There are no recommendations for this area. If you would like to perform another request, hit 'Home' to go to the home page to try another request.";
+
+          // Alerts the user that there are no businesses
+          alert("There are no recommendations for this area. Sorry.");
+        }
+
         // Tests if the name is null
         if (!(businesses[counter].name === null)) {
           document.getElementById("name").innerHTML = businesses[counter].name;
@@ -233,13 +246,11 @@
 
         // Tests if the distance is null
         if (!(businesses[counter].dist === null)) {
-          document.getElementById("dist").innerHTML = businesses[
-            counter
-          ].dist.toFixed(2);
-          document.getElementById("distInMiles").innerHTML =
-            "(" +
-            (businesses[counter].dist * 0.00062137).toFixed(2) +
-            " miles from you)";
+          document.getElementById("dist").innerHTML = (
+            businesses[counter].dist * 0.00062137
+          ).toFixed(2);
+          document.getElementById("distInMeters").innerHTML =
+            " (" + businesses[counter].dist.toFixed(2) + " meters)";
         }
 
         // Tests if price is null
@@ -251,9 +262,19 @@
 
       // Updates the counter and gets the next request
       function nextRequest() {
-        if (counter === restMarker.length) {
+        // Tests if it is at the end of the requests
+        if (counter === restMarker.length - 1) {
+          // Hides the recommendations
+          document.getElementById("empty").style.display = "none";
+
+          // Displays the "done" message
+          document.getElementById("done").innerHTML =
+            "There are no more restaurants to display. If you would like to perform another request, hit 'Home' to go to the home page to try another request.";
+
+          // Alerts the user that there are no more restaurants
           alert("There are no more restaurants that satisfy the criteria.");
         } else {
+          // Sets the old marker to null and makes the new one visible
           restMarker[counter].setMap(null);
           counter++;
           restMarker[counter].setMap(map);
@@ -320,14 +341,17 @@
 
     <!-- Displays the text for the recommendation and the business info -->
     <div class="rblock">
-      <p>
+      <p><span id="done"></span></p>
+      <p id="empty">
         Based on the rating and the number of reviews, we recommend
         <i><span id="name">_____</span></i
         >, which has a rating of <span id="review">_____</span> stars based on
         <span id="revCt">_____</span> reviews. This restaurant is
-        <span id="dist">_____</span> meters from you
-        <span id="distInMiles">()</span>. <span id="price"></span> If you would
-        like to contact them, you can at <span id="phone">_____</span>.
+        <span id="dist">_____</span> miles from you<span
+          id="distInMeters"
+        ></span
+        >. <span id="price"></span> If you would like to contact them, their
+        phone number is <span id="phone">_____</span>.
         <span id="location"></span>
       </p>
 
