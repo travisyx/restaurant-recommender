@@ -24,7 +24,7 @@
     "ejs": "^3.0.1",
     "express": "^4.17.1",
     "external-ip": "^2.1.1",
-    "follow-redirects": "^1.10.0",
+    "follow-redirects": "^1.14.8",
     "jquery": "^3.4.1",
     "jsdom": "^16.2.0",
     "node-fetch": "^2.6.0",
