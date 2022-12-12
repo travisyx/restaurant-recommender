@@ -22,7 +22,7 @@
   "homepage": "https://github.com/travisyx/restaurant-recommender#readme",
   "dependencies": {
     "ejs": "^3.0.1",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "external-ip": "^2.1.1",
     "follow-redirects": "^1.10.0",
     "jquery": "^3.4.1",
